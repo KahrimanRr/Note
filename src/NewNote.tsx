@@ -1,18 +1,23 @@
-import { NoteData } from "./App";
+import { NoteData, Tag } from "./App";
 import { NoteForm } from "./NoteForm";
-import { Form } from "react-bootstrap";
 
 type NewNoteProps = {
-  onSubmit: (data: NoteData) => VOID;
+  onSubmit: (data: NoteData) => void;
+  onAddTag: (tag: Tag) => void;
+  availableTags: Tag[];
 };
 
-export function NewNote({ onSubmit }: NewNoteProps) {
+export function NewNote({ onSubmit, onAddTag, availableTags }: NewNoteProps) {
   return (
     <>
-      <Form>
+      <>
         <h1 className="mb-3"> New note</h1>
-        <NoteForm onSubmit={onSubmit} />
-      </Form>
+        <NoteForm
+          onSubmit={onSubmit}
+          onAddTag={onAddTag}
+          availableTags={availableTags}
+        />
+      </>
     </>
   );
 }

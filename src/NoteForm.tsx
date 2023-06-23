@@ -1,32 +1,31 @@
 import { Button, Col, Form, Row, Stack } from "react-bootstrap";
 import CreatableReactSelect from "react-select/creatable";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FormEvent, useRef, useState } from "react";
 import { NoteData, Tag } from "./App";
+import { v4 as uuidV4 } from "uuid";
 
 type NoteFormProps = {
   onSubmit: (data: NoteData) => void;
-}; /**we pass our note data and expect nothing in return */
+  onAddTag: (tag: Tag) => void;
+  availableTags: Tag[];
+};
 
-/**will take function that will take some data based on our note data */
-export function NoteForm({ onSubmit }: NoteFormProps) {
-  /**ONsubmitt will usually take some type of data for our note */
-  const titleRef =
-    useRef<HTMLInputElement>(
-      null
-    ); /**input element that we are gonna give our values from */
+export function NoteForm({ onSubmit, onAddTag, availableTags }: NoteFormProps) {
+  const titleRef = useRef<HTMLInputElement>(null);
   const markdownRef = useRef<HTMLTextAreaElement>(null);
-  const [selectedTags, setselectedTags] = useState<Tag[]>(
-    []
-  ); /**array of tag objects,store selected tags,selected tags initial state to be empty array */
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const navigate = useNavigate();
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
     onSubmit({
       title: titleRef.current!.value,
       markdown: markdownRef.current!.value,
-      tags: [] /**! saying it is never gonna be null bcs we made sure the value is req */,
+      tags: selectedTags,
     });
+
+    navigate("..");
   }
 
   return (
@@ -44,19 +43,24 @@ export function NoteForm({ onSubmit }: NoteFormProps) {
               <Form.Group controlId="tags">
                 <Form.Label>Tags:</Form.Label>
                 <CreatableReactSelect
+                  onCreateOption={(label) => {
+                    const newTag = { id: uuidV4(), label };
+                    onAddTag(newTag);
+                    setSelectedTags((prev) => [...prev, newTag]);
+                  }}
                   value={selectedTags.map((tag) => {
                     return {
                       label: tag.label,
                       value: tag.id,
                     };
                   })}
+                  options={availableTags.map((tag) => {
+                    return { label: tag.label, value: tag.id };
+                  })}
                   onChange={(tags) => {
-                    setselectedTags(
+                    setSelectedTags(
                       tags.map((tag) => {
-                        return {
-                          label: tag.label,
-                          id: tag.value,
-                        }; /**making sure we re converting from the value that credible react select expects to the value that we are actually storing for our type  */
+                        return { label: tag.label, id: tag.value };
                       })
                     );
                   }}
