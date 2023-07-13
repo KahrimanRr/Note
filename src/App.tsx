@@ -35,10 +35,7 @@ export type Tag = {
 };
 function App() {
   const [notes, setNotes] = useLocalStorage<RawNote[]>("NOTES", []);
-  const [tags, setTags] = useLocalStorage<Tag[]>(
-    "TAGS",
-    []
-  ); /**it will take generic type,label,def val */
+  const [tags, setTags] = useLocalStorage<Tag[]>("TAGS", []);
 
   const notesWitsTags = useMemo(() => {
     return notes.map((note) => {
@@ -48,11 +45,7 @@ function App() {
       };
     });
   }, [notes, tags]);
-  /**LOOPING THROUGH ALL DIFFERENT notes and for each one of
-   * them keep all information about notes and also tags
-   * to have their associated id inside notes,run it every time notes
-   * and tags get updated
-   */
+
   function onCreateNote({ tags, ...data }: NoteData) {
     setNotes((prevNotes) => {
       return [
